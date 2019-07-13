@@ -91,7 +91,7 @@ public class ReactNativeAPKModule extends ReactContextBaseJavaModule {
   public void getApps(Callback cb) {
     List<PackageInfo> packages = this.reactContext.getPackageManager().getInstalledPackages(0);
 
-    WritableArray<String> ret = new WritableNativeArray<>();
+    WritableArray<String> ret = new WritableNativeArray();
     for (final PackageInfo p : packages) {
       ret.pushString(p.packageName);
     }
@@ -102,7 +102,7 @@ public class ReactNativeAPKModule extends ReactContextBaseJavaModule {
   public void getNonSystemApps(Callback cb) {
     List<PackageInfo> packages = this.reactContext.getPackageManager().getInstalledPackages(0);
 
-    WritableArray<String> ret = new WritableNativeArray<>();
+    WritableArray<String> ret = new WritableNativeArray();
     for (final PackageInfo p : packages) {
       if ((p.applicationInfo.flags & ApplicationInfo.FLAG_SYSTEM) == 0) {
         ret.pushString(p.packageName);
