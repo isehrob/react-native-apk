@@ -14,6 +14,7 @@ import com.facebook.react.bridge.ReactContextBaseJavaModule;
 import com.facebook.react.bridge.ReactMethod;
 import com.facebook.react.bridge.Callback;
 import com.facebook.react.bridge.WritableNativeArray;
+import com.facebook.react.bridge.WritableArray;
 
 import java.util.ArrayList;
 import java.util.List;
