@@ -16,8 +16,8 @@ var rnApk = {
    *
    * @return {Array} Returns an array containing the apps.
    */
-  getApps: function() {
-    return RNAPK.getApps();
+  getApps: function(cb) {
+    return RNAPK.getApps(cb);
   },
 
   /**
