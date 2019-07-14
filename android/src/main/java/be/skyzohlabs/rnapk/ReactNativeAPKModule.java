@@ -57,7 +57,7 @@ public class ReactNativeAPKModule extends ReactContextBaseJavaModule {
       String callingPackageName = this.reactContext.getPackageManager().getNameForUid(Binder.getCallingUid());
       Uri apkUri = FileProvider.getUriForFile(this.reactContext, callingPackageName+".fileprovider", toInstall);
       Intent intent = new Intent(Intent.ACTION_VIEW);
-      intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+      intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
       intent.setDataAndType(apkUri, "application/vnd.android.package-archive");
       intent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
       this.reactContext.startActivity(intent);
