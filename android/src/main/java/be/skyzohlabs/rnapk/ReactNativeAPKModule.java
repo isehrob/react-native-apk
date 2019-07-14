@@ -78,6 +78,7 @@ public class ReactNativeAPKModule extends ReactContextBaseJavaModule {
       intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
       this.reactContext.startActivity(intent);
     }
+    return validAPK;
   }
 
   @ReactMethod
