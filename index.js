@@ -46,8 +46,8 @@ var rnApk = {
    * @param {String} packagePath - Path to the APK to install.
    * @return {void}
    */
-  installApp: function(packagePath) {
-    return RNAPK.installApp(packagePath);
+  installApp: function(packagePath, cb) {
+    return RNAPK.installApp(packagePath, cb);
   },
 
   /**

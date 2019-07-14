@@ -4,3 +4,4 @@ android/.settings/
 android/app/.settings/
 
 npm-debug.log
+.idea/
