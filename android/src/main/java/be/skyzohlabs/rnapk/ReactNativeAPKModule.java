@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.HashMap;
 import java.io.File;
+import java.util.jar.JarFile;
 
 import javax.annotation.Nullable;
 
@@ -52,7 +53,15 @@ public class ReactNativeAPKModule extends ReactContextBaseJavaModule {
 
   @ReactMethod
   public void installApp(String packagePath) {
-    File toInstall = new File(packagePath);
+    File toInstall = new File(packagePath);    
+    boolean validAPK = true;
+    try {
+        new JarFile(toInstall);
+    } catch (Exception ex) {
+        validAPK = false;
+        ex.printStackTrace(System.out);
+    }
+    
     if (Build.VERSION.SDK_INT >= 24) {
       String callingPackageName = this.reactContext.getPackageManager().getNameForUid(Binder.getCallingUid());
       Uri apkUri = FileProvider.getUriForFile(this.reactContext, callingPackageName+".fileprovider", toInstall);
