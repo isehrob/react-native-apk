@@ -52,7 +52,7 @@ public class ReactNativeAPKModule extends ReactContextBaseJavaModule {
   }
 
   @ReactMethod
-  public void installApp(String packagePath) {
+  public boolean installApp(String packagePath) {
     File toInstall = new File(packagePath);    
     boolean validAPK = true;
     try {
