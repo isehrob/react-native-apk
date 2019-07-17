@@ -76,7 +76,7 @@ public class ReactNativeAPKModule extends ReactContextBaseJavaModule {
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         this.reactContext.startActivity(intent);
       }
-      cb.invoke(manager.getPackageArchiveInfo(toInstall, manager.GET_META_DATA).packageName);
+      cb.invoke(manager.getPackageArchiveInfo(packagePath, manager.GET_META_DATA).packageName);
     } catch (Exception e) {
       StringWriter sw = new StringWriter();
       PrintWriter pw = new PrintWriter(sw);
