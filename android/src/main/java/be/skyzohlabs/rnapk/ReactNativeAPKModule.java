@@ -84,7 +84,7 @@ public class ReactNativeAPKModule extends ReactContextBaseJavaModule {
       String sStackTrace = sw.toString();
       cb.invoke(sStackTrace);
     }
-    
+  
   }
 
   @ReactMethod
