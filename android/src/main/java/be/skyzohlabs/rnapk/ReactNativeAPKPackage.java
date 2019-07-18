@@ -16,7 +16,7 @@ public class ReactNativeAPKPackage implements ReactPackage {
     return Arrays.<NativeModule>asList(new ReactNativeAPKModule(reactContext));
   }
 
-  @Override
+  // @Override
   public List<Class<? extends JavaScriptModule>> createJSModules() {
     return Collections.emptyList();
   }

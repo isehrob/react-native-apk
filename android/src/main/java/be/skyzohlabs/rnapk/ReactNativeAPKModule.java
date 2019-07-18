@@ -8,12 +8,16 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Binder;
 import android.os.Environment;
+import android.app.Activity;
 import android.support.v4.content.FileProvider;
 
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContextBaseJavaModule;
+import com.facebook.react.bridge.BaseActivityEventListener;
+import com.facebook.react.bridge.ActivityEventListener;
 import com.facebook.react.bridge.ReactMethod;
 import com.facebook.react.bridge.Callback;
+import com.facebook.react.bridge.Promise;
 import com.facebook.react.bridge.WritableNativeArray;
 import com.facebook.react.bridge.WritableArray;
 
@@ -30,11 +34,36 @@ import javax.annotation.Nullable;
 
 public class ReactNativeAPKModule extends ReactContextBaseJavaModule {
 
+  private static final int INSTALL_APP_REQUEST = 54645;
+
   private final ReactApplicationContext reactContext;
+
+  private Promise installAppPromise;
+
+  private final ActivityEventListener mActivityEventListener = new BaseActivityEventListener() {
+
+    @Override
+    public void onActivityResult(Activity activity, int requestCode, int resultCode, Intent intent) {
+      if (requestCode == INSTALL_APP_REQUEST) {
+        if (installAppPromise != null) {
+          // if (resultCode == Activity.RESULT_CANCELED) {
+          //   installAppPromise.reject("Installation canceled!!!");
+          // } else if (resultCode == Activity.RESULT_OK) {
+          //   installAppPromise.resolve("Ok");
+          // }
+          // Returning `RESULT_CANCELED` all the time
+          installAppPromise.resolve(resultCode);
+          installAppPromise = null;
+        }
+      }
+    }
+  };
 
   public ReactNativeAPKModule(ReactApplicationContext reactContext) {
     super(reactContext);
+    
     this.reactContext = reactContext;
+    this.reactContext.addActivityEventListener(mActivityEventListener);
   }
 
   @Override
@@ -55,34 +84,44 @@ public class ReactNativeAPKModule extends ReactContextBaseJavaModule {
   }
 
   @ReactMethod
-  public void installApp(String packagePath, Callback cb) {
+  public void installApp(String packagePath, final Promise promise) {
+    
+    Activity currentActivity = getCurrentActivity();
+
     File toInstall = new File(packagePath);
     PackageManager manager = this.reactContext.getPackageManager();
+    installAppPromise = promise;
+
     try {
       if (Build.VERSION.SDK_INT >= 24) {
         String callingPackageName = manager.getNameForUid(Binder.getCallingUid());
         toInstall.setReadable(true, false);
         Uri apkUri = FileProvider.getUriForFile(this.reactContext, callingPackageName+".fileprovider", toInstall);
-        Intent intent = new Intent(Intent.ACTION_VIEW, apkUri);
-        intent.putExtra(Intent.EXTRA_NOT_UNKNOWN_SOURCE, true);
+        Intent intent = new Intent(Intent.ACTION_INSTALL_PACKAGE, apkUri);
         intent.setDataAndType(apkUri, "application/vnd.android" + ".package-archive");
-        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+        // intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
         intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-        this.reactContext.startActivity(intent);
+        currentActivity.startActivityForResult(intent, INSTALL_APP_REQUEST);
+
       } else {
+        // I'm gonna remove this part I guess
         Uri apkUri = Uri.fromFile(toInstall);
         Intent intent = new Intent(Intent.ACTION_VIEW);
         intent.setDataAndType(apkUri, "application/vnd.android.package-archive");
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         this.reactContext.startActivity(intent);
+
       }
-      cb.invoke(manager.getPackageArchiveInfo(packagePath, manager.GET_META_DATA).packageName);
+
     } catch (Exception e) {
+
       StringWriter sw = new StringWriter();
       PrintWriter pw = new PrintWriter(sw);
       e.printStackTrace(pw);
       String sStackTrace = sw.toString();
-      cb.invoke(sStackTrace);
+      // cb.invoke(sStackTrace);
+      installAppPromise.reject(sStackTrace);
+      installAppPromise = null;
     }
   
   }
